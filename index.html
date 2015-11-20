@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0px;
+            overflow: hidden;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        a {
+            color: #0078ff;
+        }
+
+        #info {
+            color: #fff;
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            padding: 5px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <video src="mv/soojung.ogv" id="video" controls="true" autoplay="true" style="display:none"></video>
+
+<div id="container"></div>
+
+<script src="libs/myThree.js"></script>
+<script src="libs/PointerLockControls.js"></script>
+
+<script src="libs/OrbitControls.js"></script>
+<script type="text/javascript" src="libs/YuControl.js"></script>
+<script src="libs/GeometryUtils.js"></script>
+<script src="libs/FontUtils.js"></script>
+<script type="text/javascript" src="libs/TextGeometry.js"></script>
+
+<script type="text/javascript" src="font/gentilis_bold.typeface.js"></script>
+<script type="text/javascript" src="font/gentilis_regular.typeface.js"></script>
+
+
+
+<script>
+
+    var container;
+    var camera, controls, scene, renderer;
+    var light, pointLight;
+
+    var mesh;
+    var textMesh1;
+    var material_sphere1, material_sphere2;
+
+    var clock = new THREE.Clock();
+    var video,myfont;
+    var myControl;
+    // var isUserInteracting = false,
+    //         onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+    //         lon = 90, onMouseDownLon = 0,
+    //         lat = 0, onMouseDownLat = 0,
+    //         phi = 0, theta = 0,
+    //         target = new THREE.Vector3();
+
+
+    var video = document.getElementById('video');
+    var vtexture = new THREE.Texture(video);
+    vtexture.minFilter = THREE.LinearFilter ;
+    vtexture.magFilter = THREE.LinearFilter;
+    vtexture.format = THREE.RGBFormat;
+    vtexture.generateMipamps = false;
+
+
+
+
+
+    init();
+    animate();
+
+    function init() {
+        container = document.getElementById('container');
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 130);
+        // camera = new THREE.PerspectiveCamera(50, 120 / 120, 1, 10000);
+        // camera.position.set(200, 25, 0);
+        camera.position.set(0,10,0);
+        // camera.lookAt(new THREE.Vector3(0, 150, 0));
+        // camera.position.set(95,6,300);
+
+         myControl = new THREE.YuControls(camera);
+        /*
+        controls = new THREE.OrbitControls(camera);
+        controls.movementSpeed = 70;
+        controls.lookSpeed = 0.15;
+        controls.noFly = true;
+        controls.lookVertical = false;
+        controls.minPolarAngle= 0;
+        controls.maxPolarAngle = Math.PI;
+        controls.target = new THREE.Vector3(100*Math.sin(-Math.PI), 50, 100*Math.cos(-Math.PI));
+        controls.autoRotate = true;
+        */
+
+        // controls = new THREE.PointerLockControls(camera);
+
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.0035);
+
+        // light = new THREE.DirectionalLight(0xffffff);
+        // light.position.set(0, 0.5, 1).normalize();
+        // scene.add(light);
+
+
+        // var spotLight = new THREE.SpotLight(0xffffff);
+        // spotLight.position.set(0,0,0);
+        // scene.add(spotLight);
+
+        var cube = new THREE.BoxGeometry(5, 40, 80);
+
+        var cube3 = new THREE.BoxGeometry(5, 40, 80);
+        var cube4 = new THREE.BoxGeometry(5, 40, 80);
+
+        var cube2 = new THREE.BoxGeometry(80,40,5);
+
+        var sphere = new THREE.SphereGeometry(120,50,10);
+        var sphereSky = new THREE.SphereGeometry(121,50,50);
+
+        myfont ="h";
+        var textG = new THREE.TextGeometry(myfont,{font:"gentilis",size:70});
+
+        textMesh1 = new THREE.Mesh( textG, new THREE.MeshBasicMaterial({color: 0x00ff00}) );
+        textMesh1.position.y = -100;
+        // scene.add(textMesh1);
+
+
+        // THREE.ImageUtils.crossOrigin = "http://news.sohu.com/";
+
+        var material_1 = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: THREE.ImageUtils.loadTexture("img/cow.png")
+        });
+
+        var material_2 = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: THREE.ImageUtils.loadTexture("img/dog.jpg")
+        });
+
+        var sky = new THREE.MeshBasicMaterial({
+            side:THREE.DoubleSide,
+            map:THREE.ImageUtils.loadTexture("img/footer.jpg")
+        });
+
+      
+
+
+
+        var material_3 = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: THREE.ImageUtils.loadTexture("img/cat.jpg")
+        });
+
+        // sound spheres
+
+        // var materials = [];
+        // materials.push(new THREE.MeshBasicMaterial({color:0x000000}));
+        // materials.push(new THREE.MeshBasicMaterial({color:0x000000}));
+        // materials.push(new THREE.MeshBasicMaterial({color:0x000000}));
+        // materials.push(new THREE.MeshBasicMaterial({color:0x000000}));
+    
+        // materials.push(new THREE.MeshBasicMaterial({map:vtexture}));
+        // materials.push(new THREE.MeshBasicMaterial({color:0x000000}));
+
+
+         mesh4 = new THREE.Mesh(cube2, material_3);
+        mesh4.position.set(100*Math.sin(-Math.PI), 20, 100*Math.cos(-Math.PI));
+        mesh4.name = "m4";
+        // mesh4.userData = new THREE.Vector3(100*Math.sin(-Math.PI),)
+
+
+
+         mesh5 = new THREE.Mesh(cube.rotateZ(-Math.PI/6), material_3);
+        mesh5.position.set(100*Math.sin(-Math.PI/2), 50, 100*Math.cos(-Math.PI/2));
+         mesh5.name = "m5";
+
+         mesh6 = new THREE.Mesh(cube2, material_3);
+         mesh6.name = "m6";
+        mesh6.position.set(100*Math.sin(0), 20, 100*Math.cos(0));
+
+         mesh7 = createMesh(cube3);   
+        mesh7.position.set(100*Math.sin(Math.PI/2), 20, 100*Math.cos(Math.PI/2));
+        mesh7.name = "m7";
+
+        mesh8 = createMesh(cube3);   
+        mesh8.position.set(100*Math.sin(Math.PI/2), 65, 100*Math.cos(Math.PI/2)+30);
+        mesh8.name = "m8";
+
+         mesh9 = createMesh(cube3);   
+        mesh9.position.set(100*Math.sin(Math.PI/2), 65, 100*Math.cos(Math.PI/2)-55);
+        mesh9.name = "m9";
+
+        spereMesh = new THREE.Mesh(sphere,new THREE.MeshBasicMaterial({wireframe:true}));
+
+        skyMesh = new THREE.Mesh(sphereSky,sky);
+
+
+         function createMesh(geom) {
+
+            var materialArray = [];
+             materialArray.push(new THREE.MeshBasicMaterial({map: vtexture}));
+             materialArray.push(new THREE.MeshBasicMaterial({map: vtexture}));
+
+            materialArray.push(new THREE.MeshBasicMaterial({color: 0x000000}));
+            materialArray.push(new THREE.MeshBasicMaterial({color: 0x000000}));
+            materialArray.push(new THREE.MeshBasicMaterial({color: 0x000000}));
+           
+            materialArray.push(new THREE.MeshBasicMaterial({color: 0x000000}));
+            var faceMaterial = new THREE.MeshFaceMaterial(materialArray);
+            var mesh = new THREE.Mesh(geom, faceMaterial);
+
+            return mesh;
+        }
+
+
+      
+        scene.add(mesh4);
+        scene.add(mesh5);
+        scene.add(mesh6);
+        scene.add(mesh7);
+        scene.add(mesh8);
+        scene.add(mesh9);
+
+        scene.add(spereMesh);
+        scene.add(skyMesh);
+        initFoot();
+
+        //  var ambiLight = new THREE.AmbientLight(0x141414);
+        // scene.add(ambiLight);
+
+
+
+        var helper = new THREE.GridHelper(500, 10);
+        helper.color1.setHex(0x444444);
+        helper.color2.setHex(0x444444);
+        helper.position.y = 0.1;
+        scene.add(helper);
+
+
+        var axs = new THREE.AxisHelper(500);
+        scene.add(axs);
+
+
+        var sphereHelper = new THREE.HemisphereLightHelper( new THREE.HemisphereLight( 0xffffbb, 0x00ff00, 1 ),120,30,20);
+        // scene.add(sphereHelper);
+
+        //
+
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        container.innerHTML = "";
+        container.appendChild(renderer.domElement);
+
+        //
+
+        window.addEventListener('resize', onWindowResize, false);
+
+
+    }
+
+
+
+
+
+    function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // controls.handleResize();
+
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        render();
+
+    }
+
+    var count = 0;
+    function render() {
+        // count+=50;
+        // switch(count){
+        //     case 1000 :
+        //          myfont+="e";refreshText();break;
+        //     case 2000 :
+        //          myfont+="l";refreshText();break;
+        //     case 3000 :
+        //          myfont+="l";refreshText();break;
+        //     case 4000 :
+        //          myfont+="o";refreshText();break;
+        //     case 5000 :
+        //          myfont+="!";refreshText();break;
+        //     default:break;
+        // }
+        // update();
+
+        // camera.lookAt(new THREE.Vector3(0, 150, 0));
+        fadeInText();
+        var delta = clock.getDelta(),
+                time = clock.getElapsedTime() * 5;
+         // controls.update(delta);
+        if(video.readyState === video.HAVE_ENOUGH_DATA){
+                if(vtexture) {
+                    vtexture.needsUpdate = true;
+                }
+            }
+
+        myControl.update();
+
+        renderer.render(scene, camera);
+
+    }
+
+    
+    window.addEventListener("click",select,false);
+
+    var raycaster,fuck;
+    var mouse;
+    var projector = new THREE.Projector();
+    function select(event){
+       
+         var vector = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,- ( event.clientY / window.innerHeight ) * 2 + 1);
+         projector.unprojectVector(vector,camera);
+        raycaster =  new THREE.Raycaster(camera.position,vector.sub(camera.position).normalize());
+
+        // raycaster =  new THREE.Raycaster(camera.position,vector);
+
+        // mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        // raycaster.set( mouse, camera );
+        var intersects = raycaster.intersectObjects( [mesh4,mesh5,mesh6,mesh7,mesh8,mesh9] );
+
+        if(!!intersects[0]){
+
+    //         window.addEventListener("mousedown",function(e){
+    //     // autoRotate = false;
+    //     controls.autoRotate = false;
+    //     setTimeout(function(){
+    //         controls.autoRotate = true;
+    //     },3000);
+    // },false);
+
+            // controls.autoRotate = false;
+            //  setTimeout(function(){
+            //     controls.autoRotate = true;
+            // },3000);
+            myControl.autoRotate = false;
+               setTimeout(function(){
+                myControl.autoRotate = true;
+            },3000);
+
+            console.log(intersects[0].object.name);
+            console.log(intersects[0].object.position);
+            console.log(intersects[0]);
+
+            // camera.position.setX(intersects[0].object.position.x);
+            // camera.position.setZ(intersects[0].object.position.z);
+            // console.log(raycaster);
+            // fuck = raycaster.ray.origin.sub(raycaster.ray.direction);
+            // camera.position.copy(intersects[0].object.position);
+            // camera.lookAt(intersects[0].object.position);
+        }
+    }
+
+    //  window.addEventListener("mousedown",function(e){
+    //     autoRotate = true;
+    //     // controls.autoRotate = false;
+    //     // setTimeout(function(){
+    //     //     controls.autoRotate = true;
+    //     // },3000);
+    // },false);
+
+     function refreshText(){
+        scene.remove(textMesh1);
+        // var ntext = new THREE.text
+        var ntext = new THREE.TextGeometry(myfont,{font:"gentilis",size:70});
+
+        var textMesh1 = new THREE.Mesh( ntext, new THREE.MeshBasicMaterial({color: 0x00ff00}) );
+        scene.add(textMesh1);
+     }
+
+
+     function fadeInText(){
+        if(textMesh1.position.y<100){
+            textMesh1.position.y+=0.1;    
+        }   
+     }
+
+
+     function initFoot(){
+        var geometry = new THREE.PlaneGeometry( 1000, 1000 );
+        geometry.rotateX(Math.PI/2);
+          var material_foot = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: THREE.ImageUtils.loadTexture("img/footer.jpg"),
+            side: THREE.DoubleSide
+        });
+        var plane = new THREE.Mesh( geometry, material_foot );
+        scene.add( plane );
+     }
+
+</script>
+
+</body>
+</html>
